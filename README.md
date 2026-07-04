@@ -61,33 +61,3 @@ Launch the Flask backend:
 python3 app.py
 ```
 Open **[http://127.0.0.1:8080](http://127.0.0.1:8080)** in your browser to view the application.
-
----
-
-## 🛡️ Headless Browser Verification Testing
-
-Chronos includes an automated browser test suite to verify UI stability, steppers, dynamic categories, and modals:
-
-```bash
-# Execute headless browser tests
-python3 test_browser.py
-```
-
-### What the test verifies:
-1.  **Branding logo verification**: Confirms "Chronos" is displayed in the header.
-2.  **Article Loading**: Verifies feeds load and placeholders are replaced.
-3.  **Stepper Navigation**: Simulates clicking Next/Prev stepper arrows and asserts slide advances.
-4.  **Category Swapping**: Simulates switching categories (e.g. U.S.) and checks feed data.
-5.  **Sidebar Interactions**: Opens and closes panels while checking for console exceptions.
-
----
-
-## 📝 How to Write a Great README (Learning Guide)
-
-A high-quality README is the gateway to your codebase. When writing READMEs for your projects, follow these best practices:
-1.  **Clear Intro & Badges**: Start with a bold heading, a short summary of the "why" and "what", and badges to display dependencies.
-2.  **Feature Checklist**: Use bullet points to highlight core functionalities. Explain *how* they benefit the user.
-3.  **Project Directory Map**: Provide a clean folder map to orient developers on where files live.
-4.  **Quickstart Steps**: List commands chronologically so anyone can install and run your app in under 2 minutes.
-5.  **Configuration Guidelines**: Detail what environment keys or settings are needed for full operation.
-6.  **Include Tests**: Show other developers how they can run validation tests to confirm their workspace environment is configured correctly.
