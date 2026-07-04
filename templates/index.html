@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New York Times // Cinematic Editorial Canvas</title>
+    <meta name="description" content="A premium, cinematic redesign of The New York Times news deck layout, featuring background video streams, interactive timelines, and horizontal magazine grids.">
+    <!-- Google Fonts: UnifrakturMaguntia for NYT Gothic Logo, Playfair Display for editorial serif, Inter for UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    
+    <!-- CINEMATIC SCREEN BACKGROUND ENGINE (NYT VIDEO REDESIGN) -->
+    <div class="cinematic-bg" id="cinematic-bg">
+        <!-- Background Video Iframe Layer (Default misty Annapurna mountains loop) -->
+        <div class="bg-video-wrapper" id="bg-video-wrapper">
+            <iframe id="bg-youtube-iframe" src="https://www.youtube.com/embed/lmzmJNxspkc?autoplay=1&mute=1&controls=0&loop=1&playlist=lmzmJNxspkc&enablejsapi=1&showinfo=0&rel=0&iv_load_policy=3" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+        </div>
+        <!-- Background Image Layer -->
+        <div class="bg-image-wrapper" id="bg-image-wrapper"></div>
+        <!-- Dynamic Overlay gradient vignette (Color shifted via JS) -->
+        <div class="bg-gradient-overlay" id="bg-color-vignette"></div>
+    </div>
+
+    <!-- MAIN APP INTERFACE WRAPPER (Immediately visible and active on load) -->
+    <div class="nyt-app-wrapper" id="nyt-app-wrapper" style="opacity: 1; pointer-events: auto; transform: none;">
+        
+        <!-- NYT Top Navigation Bar (Matches video frames) -->
+        <header class="nyt-header">
+            <!-- Top Row: Navigation Controls, Logo & Stats -->
+            <div class="nyt-header-top">
+                <div class="nyt-header-left">
+                    <button class="sections-menu-btn" id="sections-sidebar-trigger">
+                        <i class="fa-solid fa-bars"></i>
+                        <span>SECTIONS</span>
+                    </button>
+                    <!-- Expandable Square Search -->
+                    <button class="nyt-search-btn-sq" id="nyt-search-trigger" title="Search articles">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <div class="nyt-search-slider-box" id="nyt-search-slider" style="display: none;">
+                        <input type="text" id="search-input" placeholder="Search news..." autocomplete="off">
+                        <button id="clear-search" class="clear-search-btn">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Gothic branding -->
+                <div class="nyt-logo-container" id="logo" style="cursor: pointer;">
+                    <span class="nyt-gothic-logo">Chronos</span>
+                </div>
+
+                <div class="nyt-header-right">
+                    <!-- Stats / Indexes -->
+                    <span class="nyt-stat-txt"><i class="fa-solid fa-cloud-sun"></i> 25°F</span>
+                    <span class="nyt-stat-txt"><i class="fa-solid fa-arrow-trend-up"></i> Nikkei +0.23%</span>
+
+                    <!-- Layout switches & target switches -->
+                    <div class="editorial-layout-group" id="layout-toggles" style="display: none;">
+                        <button class="layout-tab-btn" data-layout="tabbed">Magazine</button>
+                        <button class="layout-tab-btn active" data-layout="unified">Unified</button>
+                        <button class="layout-tab-btn" data-layout="split">Split Canvas</button>
+                    </div>
+                    <div class="nyt-target-panel" style="display: none;">
+                        <div class="nyt-switch" id="target-switch">
+                            <div class="switch-bullet"></div>
+                            <span class="switch-opt active" data-target="_blank">Tab</span>
+                            <span class="switch-opt" data-target="_self">Self</span>
+                        </div>
+                    </div>
+                    <button id="refresh-btn" class="nyt-action-btn" title="Refresh Feeds">
+                        <i id="refresh-icon" class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <button id="save-pref-btn" class="nyt-action-btn" title="Pin Preferences">
+                        <i class="fa-regular fa-bookmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="nyt-nav-divider"></div>
+
+            <!-- Sub-navigation category links (Linked to free Google RSS categories) -->
+            <nav class="nyt-subnav">
+                <div class="nyt-categories-bar" id="nyt-nav-categories">
+                    <a href="#" class="subnav-link active" data-source="google" data-category="world">World</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="us">U.S.</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="politics">Politics</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="ny">N.Y.</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="business">Business</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="opinion">Opinion</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="tech">Tech</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="science">Science</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="health">Health</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="sports">Sports</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="arts">Arts</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="style">Style</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="food">Food</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="travel">Travel</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="magazine">Magazine</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="tmagazine">T Magazine</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="realestate">Real Estate</a>
+                    <a href="#" class="subnav-link" data-source="google" data-category="all">All</a>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Main Display Canvas -->
+        <main class="nyt-content-canvas">
+            
+            <!-- VIEW 1 & 2: DYNAMIC MAGAZINE VIEW (THE CINEMATIC REDESIGN) -->
+            <section id="nyt-magazine-layout" class="nyt-magazine-grid active">
+                
+                <!-- Left Column: Featured Headline Details Pane (Matches Video) -->
+                <div class="nyt-featured-column">
+                    <!-- Category tags breadcrumb -->
+                    <div class="featured-category-row">
+                        <span class="feat-cat-bold" id="featured-category-main">JOURNEY</span>
+                        <span class="feat-cat-sep">/</span>
+                        <span class="feat-cat-light" id="featured-category-sub">HISTORY</span>
+                    </div>
+                    
+                    <!-- Large Day index (e.g. < 17 / 29 > with stepper buttons) -->
+                    <div class="featured-date-row">
+                        <div class="nyt-index-stepper">
+                            <button class="nyt-index-arrow-btn" id="stepper-prev-btn" title="Previous story">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <span class="large-date-number" id="featured-date-num">17</span>
+                            <span class="nyt-index-slash">/</span>
+                            <span class="nyt-index-total" id="featured-index-total">29</span>
+                            <button class="nyt-index-arrow-btn" id="stepper-next-btn" title="Next story">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Article headline with scramble animation spans -->
+                    <h1 class="editorial-headline" id="featured-title">Poon Hill, Ghode Pani Remaining Calvetron Concessions to Close</h1>
+                    
+                    <p class="editorial-snippet" id="featured-desc">Please wait while the system decodes links and crawls media assets from real-time global news feeds.</p>
+                    
+                    <!-- Play Video / Read Article pills -->
+                    <div class="editorial-actions">
+                        <button id="play-video-btn" class="pill-btn-play">
+                            <span class="play-bullet-circle"><i class="fa-solid fa-play"></i></span>
+                            <span class="play-btn-text">Play Video</span>
+                        </button>
+                        <a href="#" id="read-article-btn" class="pill-btn-text">
+                            <span>Read Article</span>
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                        </a>
+                        <button id="broadcast-btn" class="pill-btn-text btn-broadcast-trigger">
+                            <i class="fa-brands fa-x-twitter"></i>
+                            <span>Broadcast</span>
+                        </button>
+                    </div>
+
+                    <!-- Left bottom circle 360 prompt (Triggers 3D kinetic panorama effect) -->
+                    <div class="nyt-360-indicator" id="nyt-360-trigger" title="Interactive Panning View">
+                        <span class="indicator-ring"></span>
+                        <span class="indicator-text">360</span>
+                    </div>
+
+                    <!-- Autoplay progress timeline -->
+                    <div class="slideshow-control-panel" style="display: none;">
+                        <button id="playback-play" class="slideshow-ctrl-btn"><i class="fa-solid fa-pause"></i></button>
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" id="playback-timeline-progress"></div>
+                        </div>
+                    </div>
+
+                    <!-- Author Details, Date & Social row (Matches video) -->
+                    <div class="nyt-bottom-author-bar">
+                        <div class="nyt-author-avatars">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=80&auto=format&fit=crop" alt="avatar 1">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=80&auto=format&fit=crop" alt="avatar 2">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=80&auto=format&fit=crop" alt="avatar 3">
+                        </div>
+                        <div class="nyt-author-text">
+                            <span class="pub-date-info" id="featured-pub-date">Nov. 28, 2016</span>
+                            <span class="author-credits-info">by <span id="featured-source-name">Jayden West, Lee Jensen, Lilly Woods</span></span>
+                        </div>
+                        
+                        <!-- Social actions icons -->
+                        <div class="nyt-social-icons">
+                            <button class="social-circle" id="share-facebook-btn" title="Share Facebook"><i class="fa-brands fa-facebook-f"></i></button>
+                            <button class="social-circle" id="share-twitter-btn" title="Broadcast on X"><i class="fa-brands fa-twitter"></i></button>
+                            <button class="social-circle" id="share-copy-btn" title="Copy article link"><i class="fa-solid fa-link"></i></button>
+                            <button class="social-circle" id="share-bookmark-btn" title="Bookmark article"><i class="fa-regular fa-bookmark"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Timeline nodes map & Upcoming deck list -->
+                <div class="nyt-timeline-column">
+                    
+                    <!-- Vertical deck of upcoming slides (top-right side) -->
+                    <div class="nyt-upcoming-slides-deck" id="nyt-upcoming-deck">
+                        <!-- JS Injected: Next 3 slides -->
+                    </div>
+
+                    <!-- Timeline map path nodes (bottom-right side) -->
+                    <div class="nyt-map-nodes-container">
+                        <svg class="nyt-svg-track" viewBox="0 0 100 240" preserveAspectRatio="none">
+                            <path d="M 50 0 C 80 60, 20 120, 50 180 C 60 210, 40 220, 50 240" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" stroke-dasharray="4,4"></path>
+                        </svg>
+                        <div class="nyt-floating-nodes-layer" id="timeline-nodes-track">
+                            <!-- JS Injected: 2 floating white node cards with connecting path -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: Scrolling News Cards Grid -->
+                <div class="nyt-bottom-grid-row">
+                    <!-- Pull up handlebar to expand to YouTube catalog grid deck -->
+                    <div class="deck-pull-handle" id="deck-pull-handle">
+                        <i class="fa-solid fa-chevron-up"></i>
+                        <span>Pull Up to Expand</span>
+                    </div>
+                    <div class="bottom-grid-header" style="display: none;">
+                        <span class="bottom-title" id="bottom-deck-title">Recent Coverage</span>
+                        <span class="bottom-counter" id="bottom-deck-counter">0 articles</span>
+                    </div>
+                    <div class="bottom-scroll-container" id="headlines-deck-list">
+                        <!-- Horizontal scrolling news cards (white background, black text) -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 3: SPLIT CANVAS VIEW (Dual Column Panels) -->
+            <section id="split-canvas" class="split-layout-view">
+                <!-- Left Pane: Google News RSS -->
+                <div class="split-pane">
+                    <div class="pane-header">
+                        <h3><i class="fa-solid fa-rss rss-icon"></i> Google News RSS Feed</h3>
+                        <span class="article-counter" id="split-left-counter">0 articles</span>
+                    </div>
+                    <div class="news-list-pane" id="split-left-grid">
+                        <!-- Google cards -->
+                    </div>
+                </div>
+
+                <!-- Right Pane: Selected API -->
+                <div class="split-pane">
+                    <div class="pane-header">
+                        <div class="select-wrapper">
+                            <select id="split-right-select">
+                                <option value="newsapi">NewsAPI Feed</option>
+                                <option value="newsdata">NewsData.io Feed</option>
+                                <option value="mediastack">Mediastack Feed</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down select-caret"></i>
+                        </div>
+                        <span class="article-counter" id="split-right-counter">0 articles</span>
+                    </div>
+                    <div class="news-list-pane" id="split-right-grid">
+                        <!-- API cards -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Global Skeleton Loading Screen -->
+            <div id="skeleton-loader" class="skeleton-nyt-magazine" style="display: none;">
+                <div class="skeleton-pane-left"></div>
+                <div class="skeleton-pane-right"></div>
+            </div>
+
+            <!-- Empty Results Alert -->
+            <div id="no-articles-found" class="empty-news-alert" style="display: none;">
+                <i class="fa-regular fa-newspaper"></i>
+                <h3>No articles found</h3>
+                <p>No headlines matched your search term or category filters.</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="nyt-footer">
+            <span class="footer-left">&copy; 2026 The New York Times Redesign Concept</span>
+            <div class="footer-right">
+                <span class="status-indicator"><span class="status-pulse-dot"></span> System Online</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- SECTIONS SIDEBAR PANEL OVERLAY -->
+    <div id="sections-sidebar" class="sections-sidebar-overlay" style="display: none;">
+        <div class="sections-sidebar-card">
+            <div class="sidebar-header">
+                <h2>Chronos // Sections</h2>
+                <button id="close-sections-btn" class="sidebar-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="sidebar-body">
+                <div class="sidebar-sec-group">
+                    <h3>Core Editorial Channels</h3>
+                    <div class="sidebar-links-grid">
+                        <a href="#" class="sidebar-sec-link" data-source="google" data-category="world">World News</a>
+                        <a href="#" class="sidebar-sec-link" data-source="google" data-category="us">U.S. National</a>
+                        <a href="#" class="sidebar-sec-link" data-source="google" data-category="politics">Politics</a>
+                        <a href="#" class="sidebar-sec-link" data-source="google" data-category="business">Business & Finance</a>
+                        <a href="#" class="sidebar-sec-link" data-source="google" data-category="tech">Technology</a>
+                        <a href="#" class="sidebar-sec-link" data-source="google" data-category="science">Science Research</a>
+                        <a href="#" class="sidebar-sec-link" data-source="google" data-category="health">Health & Medicine</a>
+                        <a href="#" class="sidebar-sec-link" data-source="google" data-category="sports">Sports Arena</a>
+                    </div>
+                </div>
+                <div class="sidebar-sec-group" style="margin-top: 1.5rem;">
+                    <h3>Active News Engines</h3>
+                    <div class="engine-status-list">
+                        <div class="engine-status-row">
+                            <span>Google News RSS</span>
+                            <span class="status-badge free">FREE ACTIVE</span>
+                        </div>
+                        <div class="engine-status-row">
+                            <span>NewsAPI.org</span>
+                            <span class="status-badge" id="sidebar-status-newsapi">KEYS PENDING</span>
+                        </div>
+                        <div class="engine-status-row">
+                            <span>NewsData.io</span>
+                            <span class="status-badge" id="sidebar-status-newsdata">KEYS PENDING</span>
+                        </div>
+                        <div class="engine-status-row">
+                            <span>Mediastack.com</span>
+                            <span class="status-badge" id="sidebar-status-mediastack">KEYS PENDING</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-box"></div>
+
+    <!-- Twitter Broadcast modal -->
+    <div id="tweet-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Draft Tweet // Broadcast</h2>
+                <button id="close-modal-btn" class="modal-close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="x-card-preview">
+                    <div class="x-card-header">
+                        <div class="x-avatar">C</div>
+                        <div class="x-names">
+                            <span class="x-display">Chronos Reader</span>
+                            <span class="x-handle">@chronos_deck &bull; now</span>
+                        </div>
+                    </div>
+                    
+                    <div class="x-composer">
+                        <textarea id="tweet-textarea" rows="4" placeholder="Draft your tweet details..."></textarea>
+                    </div>
+
+                    <div class="x-card-link-preview">
+                        <div class="x-preview-details">
+                            <span class="x-preview-domain" id="tweet-preview-domain">news.google.com</span>
+                            <h4 id="tweet-preview-headline">Headline Title</h4>
+                            <p class="x-preview-snippet">Read the full coverage inside your news reader feed deck.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="x-status-line">
+                    <span id="char-counter">0 / 280</span>
+                    <span class="x-url-tip">Note: All links count as 23 characters on X.</span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="modal-cancel-btn" class="btn-cancel">Discard</button>
+                <button id="modal-post-btn" class="btn-post-x">
+                    <i class="fa-brands fa-x-twitter"></i> Publish Post
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- YouTube Iframe API Script -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- Main Client Script -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
